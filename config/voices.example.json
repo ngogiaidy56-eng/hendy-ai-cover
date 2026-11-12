@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "description": "Copy một preset vào config/voices.json sau khi đã xác minh quyền sử dụng model.",
+  "voices": [
+    {
+      "id": "licensed-voice-001",
+      "name": "Preset Voice 01",
+      "description": "Giọng mẫu do chủ sở hữu cấp phép sử dụng.",
+      "enabled": true,
+      "model_key": "models/voices/voice-001.pth",
+      "index_key": "models/voices/voice-001.index",
+      "speaker_id": 0,
+      "pitch": 0,
+      "index_rate": 0.65,
+      "f0_method": "rmvpe",
+      "rights": {
+        "rights_holder": "Tên chủ sở hữu / đơn vị cấp phép",
+        "license": "Mô tả giấy phép hoặc văn bản đồng ý",
+        "authorization_reference": "Mã hợp đồng / URL / hồ sơ nội bộ",
+        "voice_owner_consent": true,
+        "commercial_use_allowed": false
+      }
+    }
+  ]
+}

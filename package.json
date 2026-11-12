@@ -1,0 +1,22 @@
+{
+  "name": "hendy-ai-cover",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Telegram AI song-cover service with licensed preset voice conversion, PostgreSQL jobs, and an isolated Python worker.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node apps/api/server.js",
+    "dev": "node --watch apps/api/server.js",
+    "test": "node --test tests/*.test.js",
+    "lint": "node --check apps/api/server.js && node --check apps/api/lib.js && node --check apps/api/storage.js && node --check apps/api/bot.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.850.0",
+    "@aws-sdk/s3-request-presigner": "^3.850.0",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "grammy": "^1.38.3",
+    "pg": "^8.16.3"
+  }
+}

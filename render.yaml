@@ -1,0 +1,81 @@
+# Hendy AI Cover Basic. Create PostgreSQL and Cloudflare R2 separately,
+# then provide their credentials in the Render Environment dashboard.
+services:
+  - type: web
+    name: hendy-ai-cover-api
+    runtime: node
+    plan: 0.5c-512mb
+    region: singapore
+    branch: main
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_WEBHOOK_SECRET
+        sync: false
+      - key: WEBHOOK_AUTO_REGISTER
+        value: "true"
+      - key: BOT_MODE
+        value: webhook
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: "true"
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        value: hendy-ai-cover
+      - key: AI_WORKER_CALLBACK_SECRET
+        sync: false
+      - key: MAX_AUDIO_SIZE_MB
+        value: "20"
+      - key: MAX_AUDIO_DURATION_SECONDS
+        value: "180"
+      - key: MAX_ACTIVE_JOBS_PER_USER
+        value: "2"
+
+  - type: worker
+    name: hendy-ai-cover-worker
+    runtime: docker
+    plan: 2c-4g
+    region: singapore
+    branch: main
+    dockerfilePath: ./worker/Dockerfile
+    dockerContext: .
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_SSL
+        value: "true"
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        value: hendy-ai-cover
+      - key: AI_WORKER_CALLBACK_SECRET
+        sync: false
+      - key: API_BASE_URL
+        sync: false
+      - key: MAX_AUDIO_DURATION_SECONDS
+        value: "180"
+      - key: MAX_JOB_ATTEMPTS
+        value: "3"
+      - key: WORKER_POLL_SECONDS
+        value: "5"
+      - key: DEMUCS_DEVICE
+        value: cpu

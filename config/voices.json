@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "description": "Danh mục giọng preset đã được kiểm tra quyền sử dụng. Không thêm model nếu chưa có giấy phép hoặc sự đồng ý hợp lệ.",
+  "voices": []
+}

@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hendy_ai_cover
+      POSTGRES_USER: hendy
+      POSTGRES_PASSWORD: hendy-local-only
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hendy -d hendy_ai_cover"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    image: node:22-bookworm-slim
+    working_dir: /workspace
+    command: sh -c "npm install && npm start"
+    volumes:
+      - ./:/workspace
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://hendy:hendy-local-only@postgres:5432/hendy_ai_cover
+      DATABASE_SSL: "false"
+      APP_URL: http://localhost:10000
+      WEBHOOK_AUTO_REGISTER: "false"
+      VOICE_CATALOG_PATH: config/voices.json
+    ports:
+      - "10000:10000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://hendy:hendy-local-only@postgres:5432/hendy_ai_cover
+      DATABASE_SSL: "false"
+      API_BASE_URL: http://api:10000
+      VOICE_CATALOG_PATH: /app/config/voices.json
+      DEMUCS_DEVICE: cpu
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+volumes:
+  postgres-data:
